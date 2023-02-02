@@ -35,14 +35,20 @@ public:
 	UPROPERTY(EditAnywhere, Category = Inputs)
 	class UInputAction* leftTrigger;
 
+	UPROPERTY(EditAnywhere, Category = Inputs)
+	float power = 1000;
 
 private:
 	class AVR_Player* player;
 	TArray<FVector> lineLoc;
-	
+	bool bIsShowLine = false;
+	class UWorld* currentWorld;
 	
 	void Move(const struct FInputActionValue& value);
 	void RotateAxis(const struct FInputActionValue& value);
-	void DrawMoveLine(const struct FInputActionValue& value);
-	void Teleport(const struct FInputActionValue& value);
+	void DrawMoveLine();
+	void Teleport();
+	void ShowLine();
+	void HideLine();
+
 };
