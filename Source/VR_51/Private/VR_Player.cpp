@@ -11,6 +11,7 @@
 #include "InputAction.h"
 #include "InputMappingContext.h"
 #include "InputActionValue.h"
+#include "MoveComponent.h"
 
 
 // Sets default values
@@ -62,6 +63,11 @@ AVR_Player::AVR_Player()
 	bUseControllerRotationPitch = true;
 
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
+
+	// 액터 컴포넌트들 추가
+	moveComp = CreateDefaultSubobject<UMoveComponent>(TEXT("Move Component"));
+	
+
 }
 
 // Called when the game starts or when spawned
@@ -100,7 +106,8 @@ void AVR_Player::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	{
 		enhancedInputComponent->BindAction(leftInputs[0], ETriggerEvent::Triggered, this, &AVR_Player::OnTriggerLeft);
 		enhancedInputComponent->BindAction(leftInputs[0], ETriggerEvent::Completed, this, &AVR_Player::OnTriggerLeft);
-		enhancedInputComponent->BindAction(leftInputs[1], ETriggerEvent::Triggered, this, &AVR_Player::RotateAxis);
+
+		moveComp->SetupPlayerInputComponent(enhancedInputComponent);
 	}
 }
 
@@ -113,12 +120,5 @@ void AVR_Player::OnTriggerLeft(const FInputActionValue& value)
 	leftLog->SetText(FText::FromString(msg));
 }
 
-void AVR_Player::RotateAxis(const struct FInputActionValue& value)
-{
-	FVector2D axis = value.Get<FVector2D>();
 
-	// axis 값을 이용해서 캐릭터(콘트롤러)를 회전한다.
-	AddControllerPitchInput(axis.Y * -1.0f);
-	AddControllerYawInput(axis.X);
-}
 

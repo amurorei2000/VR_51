@@ -63,8 +63,11 @@ public:
 	UPROPERTY(EditAnywhere, Category = "VR_Settings|Inputs")
 		TArray<class UInputAction*> rightInputs;
 
+	UPROPERTY(EditAnywhere, Category = "VR_Settings|Components")
+	class UMoveComponent* moveComp;
+
 private:
 	void OnTriggerLeft(const struct FInputActionValue& value);
-	void RotateAxis(const struct FInputActionValue& value);
+	
 
 };
