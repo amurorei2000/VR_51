@@ -33,10 +33,28 @@ public:
 		class UInputAction* trigger_right;
 
 	UPROPERTY(EditAnywhere, Category = Inputs)
+		class UInputAction* trigger_right_touch;
+
+	UPROPERTY(EditAnywhere, Category = Inputs)
 		class UInputAction* thumb_right;
 
+	UPROPERTY(EditAnywhere, Category = Inputs)
+		class UInputAction* thumb_right_touch;
+
+	UPROPERTY(EditAnywhere, Category = Inputs)
+	float grabDistance = 30.0f;
+
 private:
+	class AVR_Player* player;
+	class UVRHandAnimInstance* rightHandAnim;
+
 	void GripRightAction(const struct FInputActionValue& value);
 	void TriggerRightAction(const struct FInputActionValue& value);
-	void ThumbRightAction();
+	void TrigerRightTouch();
+	void TrigerRightTouchEnd();
+	void ThumbRightTouch();
+	void ThumbRightTouchEnd();
+	void ResetRightFingers();
+	void GrabObject(USkeletalMeshComponent* selectHand);
+
 };
