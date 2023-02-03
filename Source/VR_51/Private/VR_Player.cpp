@@ -12,6 +12,7 @@
 #include "InputMappingContext.h"
 #include "InputActionValue.h"
 #include "MoveComponent.h"
+#include "GraspComponent.h"
 
 
 // Sets default values
@@ -66,7 +67,7 @@ AVR_Player::AVR_Player()
 
 	// 액터 컴포넌트들 추가
 	moveComp = CreateDefaultSubobject<UMoveComponent>(TEXT("Move Component"));
-	
+	graspComp = CreateDefaultSubobject<UGraspComponent>(TEXT("Grasp Component"));
 
 }
 
@@ -108,6 +109,7 @@ void AVR_Player::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 		enhancedInputComponent->BindAction(leftInputs[0], ETriggerEvent::Completed, this, &AVR_Player::OnTriggerLeft);
 
 		moveComp->SetupPlayerInputComponent(enhancedInputComponent);
+		graspComp->SetupPlayerInputComponent(enhancedInputComponent);
 	}
 }
 

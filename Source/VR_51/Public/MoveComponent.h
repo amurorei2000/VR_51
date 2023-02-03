@@ -38,11 +38,15 @@ public:
 	UPROPERTY(EditAnywhere, Category = Inputs)
 	float power = 1000;
 
+	UPROPERTY(EditAnywhere, Category = Effect)
+	TSubclassOf<class ATeleportRingActor> teleport_fx;
+
 private:
 	class AVR_Player* player;
 	TArray<FVector> lineLoc;
 	bool bIsShowLine = false;
 	class UWorld* currentWorld;
+	class ATeleportRingActor* spawned_fx;
 	
 	void Move(const struct FInputActionValue& value);
 	void RotateAxis(const struct FInputActionValue& value);
@@ -50,5 +54,5 @@ private:
 	void Teleport();
 	void ShowLine();
 	void HideLine();
-
+	void TeleportFade();
 };
