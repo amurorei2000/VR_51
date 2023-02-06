@@ -6,6 +6,14 @@
 #include "Components/ActorComponent.h"
 #include "GraspComponent.generated.h"
 
+UENUM(BlueprintType)
+enum class EGrabType : uint8
+{
+	ELine	UMETA(DisplayName="LineType"),
+	ESweep	UMETA(DisplayName="SweepType"),
+	EOverlap	UMETA(DisplayName="OverlapType")
+};
+
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class VR_51_API UGraspComponent : public UActorComponent
@@ -44,11 +52,17 @@ public:
 	UPROPERTY(EditAnywhere, Category = Inputs)
 	float grabDistance = 30.0f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Inputs)
+	EGrabType myGrabType = EGrabType::ELine;
+
 private:
 	class AVR_Player* player;
 	class UVRHandAnimInstance* rightHandAnim;
+	bool bIsGrab = false;
+	class APickUpActor* grabedObject;
 
 	void GripRightAction(const struct FInputActionValue& value);
+	void GripRightRelease(const struct FInputActionValue& value);
 	void TriggerRightAction(const struct FInputActionValue& value);
 	void TrigerRightTouch();
 	void TrigerRightTouchEnd();
@@ -56,5 +70,7 @@ private:
 	void ThumbRightTouchEnd();
 	void ResetRightFingers();
 	void GrabObject(USkeletalMeshComponent* selectHand);
+	void ReleaseObject(USkeletalMeshComponent* selectHand);
+	void DrawGrabRange();
 
 };

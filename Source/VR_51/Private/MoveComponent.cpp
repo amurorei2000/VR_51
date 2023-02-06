@@ -144,7 +144,7 @@ void UMoveComponent::Teleport()
 	// 가리킨 지점으로 순간 이동(즉시 좌표 변경)한다.
 	FVector targetLoc = lineLoc[lineLoc.Num() - 1];
 	targetLoc.Z += player->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
-	player->SetActorLocation(targetLoc, false, nullptr, ETeleportType::TeleportPhysics);
+	player->SetActorLocation(targetLoc, false, nullptr, ETeleportType::None);
 
 	if (spawned_fx != nullptr)
 	{
