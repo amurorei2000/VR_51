@@ -24,7 +24,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(EditAnywhere, Category = "PickUp")
-		class USphereComponent* sphereComp;
+		class UBoxComponent* sphereComp;
+		//class USphereComponent* sphereComp;
 
 	UPROPERTY(EditAnywhere, Category = "PickUp")
 		class UStaticMeshComponent* meshComp;

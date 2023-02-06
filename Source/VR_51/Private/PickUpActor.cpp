@@ -3,6 +3,7 @@
 
 #include "PickUpActor.h"
 #include "Components/SphereComponent.h"
+#include "Components/BoxComponent.h"
 #include "Components/StaticMeshComponent.h"
 
 
@@ -11,7 +12,8 @@ APickUpActor::APickUpActor()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	sphereComp = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere Collision"));
+	//sphereComp = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere Collision"));
+	sphereComp = CreateDefaultSubobject<UBoxComponent>(TEXT("Sphere Collision"));
 	SetRootComponent(sphereComp);
 	sphereComp->SetCollisionProfileName(TEXT("PickUp"));
 

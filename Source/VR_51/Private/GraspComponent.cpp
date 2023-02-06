@@ -8,7 +8,9 @@
 #include "DrawDebugHelpers.h"
 #include "PickUpActor.h"
 #include "Components/TextRenderComponent.h"
-
+#include "Components/SphereComponent.h"
+#include "MotionControllerComponent.h"
+#include "Components/BoxComponent.h"
 
 // Sets default values for this component's properties
 UGraspComponent::UGraspComponent()
@@ -29,7 +31,7 @@ void UGraspComponent::BeginPlay()
 	// 플레이어 캐릭터와 오른손 애니메이션 인스턴스를 캐싱한다.
 	player = Cast<AVR_Player>(GetOwner());
 	rightHandAnim = Cast<UVRHandAnimInstance>(player->rightHand->GetAnimInstance());
-	
+
 	if (rightHandAnim != nullptr)
 	{
 		ResetRightFingers();
@@ -44,7 +46,8 @@ void UGraspComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 
 	if (bIsGrab)
 	{
-		DrawGrabRange();
+		//DrawGrabRange();
+		prevLocation = grabedObject->GetActorLocation();
 	}
 }
 
@@ -128,16 +131,28 @@ void UGraspComponent::GrabObject(USkeletalMeshComponent* selectHand)
 	{
 		// 방법 2 - SphereTrace 방식
 		FVector center = selectHand->GetComponentLocation();
+		//FVector endLoc = center + selectHand->GetRightVector() * grabDistance;
 		FHitResult hitInfo;
-		FString profileName = FString(TEXT("PickUp"));
 		FCollisionQueryParams params;
 		params.AddIgnoredActor(player);
 
-		if (GetWorld()->SweepSingleByProfile(hitInfo, center, center, FQuat::Identity, FName(*profileName), FCollisionShape::MakeSphere(grabDistance), params) && grabedObject == nullptr)
+		if (GetWorld()->SweepSingleByChannel(hitInfo, center, center, FQuat::Identity, ECC_Visibility, FCollisionShape::MakeSphere(grabDistance), params) && grabedObject == nullptr)
 		{
 			player->rightLog->SetText(FText::FromString(hitInfo.GetActor()->GetName()));
-			hitInfo.GetActor()->AttachToComponent(selectHand, FAttachmentTransformRules::KeepWorldTransform);
 			grabedObject = Cast<APickUpActor>(hitInfo.GetActor());
+			// 만일, 검색된 물체의 physics가 simulate 중이라면...
+			if (IsValid(grabedObject))
+			//if (grabedObject != nullptr)
+			{
+				physicsState = grabedObject->sphereComp->IsSimulatingPhysics();
+				if (physicsState)
+				{
+					// 대상의 physics를 꺼준다.
+					grabedObject->sphereComp->SetSimulatePhysics(false);
+				}
+
+				hitInfo.GetActor()->AttachToComponent(selectHand, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("GrabPoint"));
+			}
 		}
 	}
 	else if (myGrabType == EGrabType::EOverlap)
@@ -158,7 +173,7 @@ void UGraspComponent::GrabObject(USkeletalMeshComponent* selectHand)
 				APickUpActor* picks = Cast<APickUpActor>(hitInfo.GetActor());
 				if (picks != nullptr)
 				{
-					hitInfo.GetActor()->AttachToComponent(selectHand, FAttachmentTransformRules::KeepWorldTransform);
+					hitInfo.GetActor()->AttachToComponent(selectHand, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("GrabPoint"));
 				}
 			}
 		}
@@ -174,7 +189,20 @@ void UGraspComponent::ReleaseObject(USkeletalMeshComponent* selectHand)
 	{
 		// 잡고 있던 물체를 떼어낸다.
 		grabedObject->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-		
+
+		// 물체의 본래 피직스 on/off 여부를 되돌려준다.
+		grabedObject->sphereComp->SetSimulatePhysics(physicsState);
+		//FVector dir = player->rightController->GetComponentLocation() - prevLocation;
+		//dir.Normalize();
+		FVector dir = player->rightController->GetPhysicsLinearVelocity();
+		dir.Normalize();
+		//GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Yellow, FString::Printf(TEXT("%.3f, %.3f, %.3f"), curDir.X, curDir.Y, curDir.Z));
+		grabedObject->sphereComp->AddImpulse(dir * throwPower);
+
+		FVector dTheta = player->rightController->GetPhysicsAngularVelocityInDegrees();
+		//dTheta = selectHand->GetComponentTransform().TransformVector(dTheta);
+		grabedObject->sphereComp->AddTorqueInDegrees(dTheta * throwPower);
+
 		// grabedObject 포인터 변수를 nullptr로 변경한다.
 		grabedObject = nullptr;
 	}
@@ -192,7 +220,9 @@ void UGraspComponent::DrawGrabRange()
 	}
 	else if (myGrabType == EGrabType::ESweep || myGrabType == EGrabType::EOverlap)
 	{
+		FVector center = player->rightHand->GetComponentLocation();
+
 		// 선 그리기(Sphere)
-		DrawDebugSphere(GetWorld(), player->rightHand->GetComponentLocation(), grabDistance, 30, FColor::Cyan, false, -1, 0, 1);
+		DrawDebugSphere(GetWorld(), center, grabDistance, 30, FColor::Cyan, false, -1, 0, 1);
 	}
 }
