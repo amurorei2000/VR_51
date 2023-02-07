@@ -38,6 +38,9 @@ public:
 	class UInputAction* grip_right;
 
 	UPROPERTY(EditAnywhere, Category = Inputs)
+		class UInputAction* btn_A;
+
+	UPROPERTY(EditAnywhere, Category = Inputs)
 		class UInputAction* trigger_right;
 
 	UPROPERTY(EditAnywhere, Category = Inputs)
@@ -58,6 +61,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Inputs)
 	float throwPower = 500;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Inputs)
+	float torquePower = 1500;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Inputs)
+	class UHapticFeedbackEffect_Base* grabHaptic;
+
 private:
 	class AVR_Player* player;
 	class UVRHandAnimInstance* rightHandAnim;
@@ -65,7 +74,10 @@ private:
 	class APickUpActor* grabedObject;
 	bool physicsState = false;
 	FVector prevLocation;
+	FVector prevForward;
 	FVector throwDirection;
+	bool bIsReady = false;
+	
 
 	void GripRightAction(const struct FInputActionValue& value);
 	void GripRightRelease(const struct FInputActionValue& value);
@@ -76,7 +88,8 @@ private:
 	void ThumbRightTouchEnd();
 	void ResetRightFingers();
 	void GrabObject(USkeletalMeshComponent* selectHand);
-	void ReleaseObject(USkeletalMeshComponent* selectHand);
+	void ReleaseObject(USkeletalMeshComponent* selectHand, FVector torque);
 	void DrawGrabRange();
+	void ReadyToShoot();
 
 };

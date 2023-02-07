@@ -11,6 +11,8 @@
 #include "Components/SphereComponent.h"
 #include "MotionControllerComponent.h"
 #include "Components/BoxComponent.h"
+#include "Haptics/HapticFeedbackEffect_Base.h"
+
 
 // Sets default values for this component's properties
 UGraspComponent::UGraspComponent()
@@ -44,14 +46,7 @@ void UGraspComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (bIsGrab)
-	{
-		//DrawGrabRange();
-		throwDirection = player->rightController->GetComponentLocation() - prevLocation;
-		prevLocation = player->rightController->GetComponentLocation();
-
-		DrawDebugLine(GetWorld(), player->rightController->GetComponentLocation(), player->rightController->GetComponentLocation() + throwDirection * 50, FColor::Red, false, -1, 0, 3);
-	}
+	
 }
 
 void UGraspComponent::SetupPlayerInputComponent(UEnhancedInputComponent* PlayerInputComponent)
@@ -64,6 +59,9 @@ void UGraspComponent::SetupPlayerInputComponent(UEnhancedInputComponent* PlayerI
 	PlayerInputComponent->BindAction(trigger_right_touch, ETriggerEvent::Completed, this, &UGraspComponent::TrigerRightTouchEnd);
 	PlayerInputComponent->BindAction(thumb_right_touch, ETriggerEvent::Started, this, &UGraspComponent::ThumbRightTouch);
 	PlayerInputComponent->BindAction(thumb_right_touch, ETriggerEvent::Completed, this, &UGraspComponent::ThumbRightTouchEnd);
+	PlayerInputComponent->BindAction(btn_A, ETriggerEvent::Started, this, &UGraspComponent::ReadyToShoot);
+	PlayerInputComponent->BindAction(btn_A, ETriggerEvent::Completed, this, &UGraspComponent::ReadyToShoot);
+
 }
 
 void UGraspComponent::GripRightAction(const FInputActionValue& value)
@@ -71,12 +69,16 @@ void UGraspComponent::GripRightAction(const FInputActionValue& value)
 	rightHandAnim->PoseAlphaGrasp = value.Get<float>();
 	// 오른손으로 물체 잡기
 	GrabObject(player->rightHand);
+
+	// 오른손에 진동 효과 주기
+	GetWorld()->GetFirstPlayerController()->PlayHapticEffect(grabHaptic, EControllerHand::Right, 1, false);
+	
 }
 
 void UGraspComponent::GripRightRelease(const struct FInputActionValue& value)
 {
 	bIsGrab = false;
-	ReleaseObject(player->rightHand);
+	//ReleaseObject(player->rightHand);
 }
 
 void UGraspComponent::TriggerRightAction(const FInputActionValue& value)
@@ -186,7 +188,7 @@ void UGraspComponent::GrabObject(USkeletalMeshComponent* selectHand)
 	bIsGrab = true;
 }
 
-void UGraspComponent::ReleaseObject(USkeletalMeshComponent* selectHand)
+void UGraspComponent::ReleaseObject(USkeletalMeshComponent* selectHand, FVector torque)
 {
 	// 만일, 잡고 있던 물체가 있다면...
 	if (grabedObject != nullptr)
@@ -205,10 +207,9 @@ void UGraspComponent::ReleaseObject(USkeletalMeshComponent* selectHand)
 		GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Yellow, FString::Printf(TEXT("%.3f, %.3f, %.3f"), throwDirection.X, throwDirection.Y, throwDirection.Z));
 		UE_LOG(LogTemp, Log, TEXT("%.3f, %.3f, %.3f"), throwDirection.X, throwDirection.Y, throwDirection.Z);
 		// 구한 방향대로 충격을 가한다.
-		boxComp->AddImpulse(throwDirection * throwPower);
+		//boxComp->AddImpulse(throwDirection * throwPower);
 
-		//dTheta = selectHand->GetComponentTransform().TransformVector(dTheta);
-		//grabedObject->sphereComp->AddTorqueInDegrees(dTheta * throwPower);
+		boxComp->AddTorqueInDegrees(torque * torquePower, NAME_None, true);
 
 		// grabedObject 포인터 변수를 nullptr로 변경한다.
 		grabedObject = nullptr;
@@ -231,5 +232,35 @@ void UGraspComponent::DrawGrabRange()
 
 		// 선 그리기(Sphere)
 		DrawDebugSphere(GetWorld(), center, grabDistance, 30, FColor::Cyan, false, -1, 0, 1);
+	}
+}
+
+void UGraspComponent::ReadyToShoot()
+{
+	if (grabedObject != nullptr)
+	{
+		if (!bIsReady)
+		{
+			//DrawGrabRange();
+			prevLocation = player->rightController->GetComponentLocation();
+			prevForward = player->rightController->GetForwardVector();
+			UE_LOG(LogTemp, Log, TEXT("X Press!!!!!"));
+		}
+		else
+		{
+			// 던질 방향
+			throwDirection = player->rightController->GetComponentLocation() - prevLocation;
+
+			// 회전값
+			FVector rotAxis = FVector::CrossProduct(prevForward, player->rightController->GetForwardVector());
+			float angle = FMath::Acos(FVector::DotProduct(prevForward, player->rightController->GetForwardVector()));
+			angle = FMath::RadiansToDegrees(angle);
+
+			ReleaseObject(player->rightHand, rotAxis * angle);
+
+			UE_LOG(LogTemp, Log, TEXT("X Release!!!!!"));
+			DrawDebugLine(GetWorld(), player->rightController->GetComponentLocation(), player->rightController->GetComponentLocation() + throwDirection * 50, FColor::Red, false, 5, 0, 3);
+		}
+		bIsReady = !bIsReady;
 	}
 }
