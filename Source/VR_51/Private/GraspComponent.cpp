@@ -207,7 +207,7 @@ void UGraspComponent::ReleaseObject(USkeletalMeshComponent* selectHand, FVector 
 		GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Yellow, FString::Printf(TEXT("%.3f, %.3f, %.3f"), throwDirection.X, throwDirection.Y, throwDirection.Z));
 		UE_LOG(LogTemp, Log, TEXT("%.3f, %.3f, %.3f"), throwDirection.X, throwDirection.Y, throwDirection.Z);
 		// 구한 방향대로 충격을 가한다.
-		//boxComp->AddImpulse(throwDirection * throwPower);
+		boxComp->AddImpulse(throwDirection * throwPower);
 
 		boxComp->AddTorqueInDegrees(torque * torquePower, NAME_None, true);
 
