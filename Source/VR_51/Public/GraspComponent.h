@@ -65,6 +65,7 @@ private:
 	class APickUpActor* grabedObject;
 	bool physicsState = false;
 	FVector prevLocation;
+	FVector throwDirection;
 
 	void GripRightAction(const struct FInputActionValue& value);
 	void GripRightRelease(const struct FInputActionValue& value);

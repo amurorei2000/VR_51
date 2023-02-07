@@ -23,10 +23,10 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(EditAnywhere, Category = "PickUp")
-		class UBoxComponent* sphereComp;
-		//class USphereComponent* sphereComp;
+	//UFUNCTION(BlueprintPure)
+	//FORCEINLINE USceneComponent GetRootComp() { return RootComponent; };
 
-	UPROPERTY(EditAnywhere, Category = "PickUp")
-		class UStaticMeshComponent* meshComp;
+protected:
+	FName coliisionProfileName = FName(TEXT("PickUp"));
+
 };

@@ -47,7 +47,10 @@ void UGraspComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	if (bIsGrab)
 	{
 		//DrawGrabRange();
-		prevLocation = grabedObject->GetActorLocation();
+		throwDirection = player->rightController->GetComponentLocation() - prevLocation;
+		prevLocation = player->rightController->GetComponentLocation();
+
+		DrawDebugLine(GetWorld(), player->rightController->GetComponentLocation(), player->rightController->GetComponentLocation() + throwDirection * 50, FColor::Red, false, -1, 0, 3);
 	}
 }
 
@@ -144,11 +147,12 @@ void UGraspComponent::GrabObject(USkeletalMeshComponent* selectHand)
 			if (IsValid(grabedObject))
 			//if (grabedObject != nullptr)
 			{
-				physicsState = grabedObject->sphereComp->IsSimulatingPhysics();
-				if (physicsState)
+				// 대상의 physics를 꺼준다.
+				UBoxComponent* boxComp = Cast<UBoxComponent>(grabedObject->GetRootComponent());
+				if (boxComp != nullptr)
 				{
-					// 대상의 physics를 꺼준다.
-					grabedObject->sphereComp->SetSimulatePhysics(false);
+					physicsState = boxComp->IsSimulatingPhysics();
+					boxComp->SetSimulatePhysics(false);
 				}
 
 				hitInfo.GetActor()->AttachToComponent(selectHand, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("GrabPoint"));
@@ -191,17 +195,20 @@ void UGraspComponent::ReleaseObject(USkeletalMeshComponent* selectHand)
 		grabedObject->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 
 		// 물체의 본래 피직스 on/off 여부를 되돌려준다.
-		grabedObject->sphereComp->SetSimulatePhysics(physicsState);
-		//FVector dir = player->rightController->GetComponentLocation() - prevLocation;
-		//dir.Normalize();
-		FVector dir = player->rightController->GetPhysicsLinearVelocity();
-		dir.Normalize();
-		//GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Yellow, FString::Printf(TEXT("%.3f, %.3f, %.3f"), curDir.X, curDir.Y, curDir.Z));
-		grabedObject->sphereComp->AddImpulse(dir * throwPower);
+		UBoxComponent* boxComp = Cast<UBoxComponent>(grabedObject->GetRootComponent());
+		if (boxComp != nullptr)
+		{
+			boxComp->SetSimulatePhysics(physicsState);
+		}
 
-		FVector dTheta = player->rightController->GetPhysicsAngularVelocityInDegrees();
+		throwDirection.Normalize();
+		GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Yellow, FString::Printf(TEXT("%.3f, %.3f, %.3f"), throwDirection.X, throwDirection.Y, throwDirection.Z));
+		UE_LOG(LogTemp, Log, TEXT("%.3f, %.3f, %.3f"), throwDirection.X, throwDirection.Y, throwDirection.Z);
+		// 구한 방향대로 충격을 가한다.
+		boxComp->AddImpulse(throwDirection * throwPower);
+
 		//dTheta = selectHand->GetComponentTransform().TransformVector(dTheta);
-		grabedObject->sphereComp->AddTorqueInDegrees(dTheta * throwPower);
+		//grabedObject->sphereComp->AddTorqueInDegrees(dTheta * throwPower);
 
 		// grabedObject 포인터 변수를 nullptr로 변경한다.
 		grabedObject = nullptr;

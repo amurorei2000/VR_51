@@ -12,14 +12,7 @@ APickUpActor::APickUpActor()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	//sphereComp = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere Collision"));
-	sphereComp = CreateDefaultSubobject<UBoxComponent>(TEXT("Sphere Collision"));
-	SetRootComponent(sphereComp);
-	sphereComp->SetCollisionProfileName(TEXT("PickUp"));
-
-	meshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh Component"));
-	meshComp->SetupAttachment(RootComponent);
-	meshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	
 }
 
 // Called when the game starts or when spawned
