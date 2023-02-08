@@ -26,6 +26,9 @@ public:
 	//UFUNCTION(BlueprintPure)
 	//FORCEINLINE USceneComponent GetRootComp() { return RootComponent; };
 
+	UPROPERTY(EditAnywhere, Category=BaseSettings)
+	FVector gripOffset;
+
 protected:
 	FName coliisionProfileName = FName(TEXT("PickUp"));
 
