@@ -69,6 +69,12 @@ public:
 	UPROPERTY(EditAnywhere, Category = "VR_Settings|Components")
 	class UGraspComponent* graspComp;
 	
+	UPROPERTY(EditAnywhere, Category = "VR_Settings|Components")
+	class UWidgetInteractionComponent* widgetPointer_right;
+
+	UPROPERTY(EditAnywhere, Category = "VR_Settings|Components")
+	class UWidgetPointerComponent* widgetPointerComp;
+
 
 private:
 	void OnTriggerLeft(const struct FInputActionValue& value);

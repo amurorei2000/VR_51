@@ -13,6 +13,8 @@
 #include "InputActionValue.h"
 #include "MoveComponent.h"
 #include "GraspComponent.h"
+#include "Components/WidgetInteractionComponent.h"
+#include "WidgetPointerComponent.h"
 
 
 // Sets default values
@@ -54,6 +56,9 @@ AVR_Player::AVR_Player()
 	rightHand->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	rightHand->SetRelativeRotation(FRotator(25.0f, 0.0f, 90.0f));
 
+	widgetPointer_right = CreateDefaultSubobject<UWidgetInteractionComponent>(TEXT("Widget Pointer"));
+	widgetPointer_right->SetupAttachment(rightController);
+
 	rightLog = CreateDefaultSubobject<UTextRenderComponent>(TEXT("Right Log Text"));
 	rightLog->SetupAttachment(rightController);
 	rightLog->SetRelativeRotation(FRotator(0.0f, 180.0f, 0.0f));
@@ -68,7 +73,7 @@ AVR_Player::AVR_Player()
 	// 액터 컴포넌트들 추가
 	moveComp = CreateDefaultSubobject<UMoveComponent>(TEXT("Move Component"));
 	graspComp = CreateDefaultSubobject<UGraspComponent>(TEXT("Grasp Component"));
-
+	widgetPointerComp = CreateDefaultSubobject<UWidgetPointerComponent>(TEXT("Widget Pointer Component"));
 }
 
 // Called when the game starts or when spawned
@@ -110,6 +115,7 @@ void AVR_Player::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 
 		moveComp->SetupPlayerInputComponent(enhancedInputComponent);
 		graspComp->SetupPlayerInputComponent(enhancedInputComponent);
+		widgetPointerComp->SetupPlayerInputComponent(enhancedInputComponent);
 	}
 }
 
