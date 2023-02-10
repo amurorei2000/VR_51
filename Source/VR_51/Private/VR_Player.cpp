@@ -112,6 +112,7 @@ void AVR_Player::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	{
 		enhancedInputComponent->BindAction(leftInputs[0], ETriggerEvent::Triggered, this, &AVR_Player::OnTriggerLeft);
 		enhancedInputComponent->BindAction(leftInputs[0], ETriggerEvent::Completed, this, &AVR_Player::OnTriggerLeft);
+		enhancedInputComponent->BindAction(leftInputs[1], ETriggerEvent::Started, this, &AVR_Player::Recenter);
 
 		moveComp->SetupPlayerInputComponent(enhancedInputComponent);
 		graspComp->SetupPlayerInputComponent(enhancedInputComponent);
@@ -128,5 +129,9 @@ void AVR_Player::OnTriggerLeft(const FInputActionValue& value)
 	leftLog->SetText(FText::FromString(msg));
 }
 
+void AVR_Player::Recenter()
+{
+	UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition();
+}
 
 

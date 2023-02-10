@@ -59,9 +59,26 @@ void AMyMovieActor::PlayMovie()
 	// 미디어 플레이 테스트
 	if (videoSouce != nullptr && mediaPlayer != nullptr)
 	{
-		// 미디어 플레이어에서 실행할 비디오 소스 파일을 연다.
-		mediaPlayer->OpenSource(videoSouce);
-		mediaPlayer->Play();
+		if (mediaPlayer->IsPlaying())
+		{
+			mediaPlayer->Pause();
+		}
+		else
+		{
+			if (mediaPlayer->IsPaused())
+			{
+				mediaPlayer->Play();
+			}
+			// 미디어 플레이어에서 실행할 비디오 소스 파일을 연다.
+			else
+			{
+				mediaPlayer->OpenSource(videoSouce);
+				mediaPlayer->Play();
+			}
+			
+		}
+
+		
 	}
 }
 
@@ -76,11 +93,19 @@ void AMyMovieActor::StopMovie()
 
 void AMyMovieActor::ReverseMovie(float second)
 {
-
+	if (mediaPlayer->IsPlaying())
+	{
+		FTimespan modifiedTime = mediaPlayer->GetTime() - FTimespan(0, 0, second);
+		mediaPlayer->Seek(modifiedTime);
+	}
 }
 
 void AMyMovieActor::ForwardMovie(float second)
 {
-
+	if (mediaPlayer->IsPlaying())
+	{
+		FTimespan modifiedTime = mediaPlayer->GetTime() + FTimespan(0, 0, second);
+		mediaPlayer->Seek(modifiedTime);
+	}
 }
 

@@ -79,5 +79,5 @@ public:
 private:
 	void OnTriggerLeft(const struct FInputActionValue& value);
 	
-
+	void Recenter();
 };
