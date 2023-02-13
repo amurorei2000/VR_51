@@ -33,7 +33,7 @@ AMyMovieActor::AMyMovieActor()
 void AMyMovieActor::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	if (playback_widget != nullptr)
 	{
 		UMovieWidget* movieWidget = Cast<UMovieWidget>(playback_widget->GetWidget());
@@ -57,55 +57,56 @@ void AMyMovieActor::PlayMovie()
 	UE_LOG(LogTemp, Log, TEXT("Play Movie Function!!!!!!!!!"));
 
 	// 미디어 플레이 테스트
-	if (videoSouce != nullptr && mediaPlayer != nullptr)
+	for (int32 i = 0; i < videoSouce.Num(); i++)
 	{
-		if (mediaPlayer->IsPlaying())
+		if (videoSouce[i] != nullptr && mediaPlayer[i] != nullptr)
 		{
-			mediaPlayer->Pause();
-		}
-		else
-		{
-			if (mediaPlayer->IsPaused())
+			if (mediaPlayer[i]->IsPlaying())
 			{
-				mediaPlayer->Play();
+				mediaPlayer[i]->Pause();
 			}
-			// 미디어 플레이어에서 실행할 비디오 소스 파일을 연다.
 			else
 			{
-				mediaPlayer->OpenSource(videoSouce);
-				mediaPlayer->Play();
-			}
-			
-		}
+				if (mediaPlayer[i]->IsPaused())
+				{
+					mediaPlayer[i]->Play();
+				}
+				// 미디어 플레이어에서 실행할 비디오 소스 파일을 연다.
+				else
+				{
+					mediaPlayer[i]->OpenSource(videoSouce[i]);
+					mediaPlayer[i]->Play();
+				}
 
-		
+			}
+		}
 	}
 }
 
 void AMyMovieActor::StopMovie()
 {
 
-	if (mediaPlayer != nullptr)
+	if (mediaPlayer[0] != nullptr)
 	{
-		mediaPlayer->Close();
+		mediaPlayer[0]->Close();
 	}
 }
 
 void AMyMovieActor::ReverseMovie(float second)
 {
-	if (mediaPlayer->IsPlaying())
+	if (mediaPlayer[0]->IsPlaying())
 	{
-		FTimespan modifiedTime = mediaPlayer->GetTime() - FTimespan(0, 0, second);
-		mediaPlayer->Seek(modifiedTime);
+		FTimespan modifiedTime = mediaPlayer[0]->GetTime() - FTimespan(0, 0, second);
+		mediaPlayer[0]->Seek(modifiedTime);
 	}
 }
 
 void AMyMovieActor::ForwardMovie(float second)
 {
-	if (mediaPlayer->IsPlaying())
+	if (mediaPlayer[0]->IsPlaying())
 	{
-		FTimespan modifiedTime = mediaPlayer->GetTime() + FTimespan(0, 0, second);
-		mediaPlayer->Seek(modifiedTime);
+		FTimespan modifiedTime = mediaPlayer[0]->GetTime() + FTimespan(0, 0, second);
+		mediaPlayer[0]->Seek(modifiedTime);
 	}
 }
 

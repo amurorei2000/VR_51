@@ -26,6 +26,10 @@ AVR_Player::AVR_Player()
 	cam = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	cam->SetupAttachment(RootComponent);
 
+	gazePointer = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Gaze Pointer"));
+	gazePointer->SetupAttachment(cam);
+	gazePointer->SetRelativeLocation(FVector(300, 0, 0));
+
 	headMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Head"));
 	headMesh->SetupAttachment(cam);
 	headMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);

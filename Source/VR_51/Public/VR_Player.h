@@ -31,6 +31,9 @@ public:
 		class UCameraComponent* cam;
 
 	UPROPERTY(EditAnywhere, Category = "VR_Settings|Components")
+	class UStaticMeshComponent* gazePointer;
+
+	UPROPERTY(EditAnywhere, Category = "VR_Settings|Components")
 		class UStaticMeshComponent* headMesh;
 
 	UPROPERTY(EditAnywhere, Category = "VR_Settings|Components")

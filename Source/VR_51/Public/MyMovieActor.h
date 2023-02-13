@@ -30,10 +30,10 @@ public:
 	class UStaticMeshComponent* screenComp;
 
 	UPROPERTY(EditAnywhere)
-	class UMediaSource* videoSouce;
+	TArray<class UMediaSource*> videoSouce;
 
 	UPROPERTY(EditAnywhere)
-	class UMediaPlayer* mediaPlayer;
+	TArray<class UMediaPlayer*> mediaPlayer;
 
 	UPROPERTY(EditAnywhere)
 	class UMediaSoundComponent* soundComp;
