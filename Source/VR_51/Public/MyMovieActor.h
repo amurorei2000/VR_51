@@ -45,4 +45,8 @@ public:
 	void StopMovie();
 	void ReverseMovie(float second);
 	void ForwardMovie(float second);
+	void ChangeMovie();
+
+private:
+	int32 videoNum = 0;
 };

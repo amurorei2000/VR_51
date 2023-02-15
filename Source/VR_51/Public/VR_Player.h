@@ -78,6 +78,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "VR_Settings|Components")
 	class UWidgetPointerComponent* widgetPointerComp;
 
+	UPROPERTY(EditAnywhere, Category = "VR_Settings|Components")
+	class UGazeComponent* gazeComp;
+
 
 private:
 	void OnTriggerLeft(const struct FInputActionValue& value);

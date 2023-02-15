@@ -15,6 +15,7 @@
 #include "GraspComponent.h"
 #include "Components/WidgetInteractionComponent.h"
 #include "WidgetPointerComponent.h"
+#include "GazeComponent.h"
 
 
 // Sets default values
@@ -78,6 +79,7 @@ AVR_Player::AVR_Player()
 	moveComp = CreateDefaultSubobject<UMoveComponent>(TEXT("Move Component"));
 	graspComp = CreateDefaultSubobject<UGraspComponent>(TEXT("Grasp Component"));
 	widgetPointerComp = CreateDefaultSubobject<UWidgetPointerComponent>(TEXT("Widget Pointer Component"));
+	gazeComp = CreateDefaultSubobject<UGazeComponent>(TEXT("Gaze Component"));
 }
 
 // Called when the game starts or when spawned
