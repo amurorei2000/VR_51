@@ -22,8 +22,16 @@ public:
 	FVector controllerLocation_Right;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector headLocation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FRotator controllerRotation_Left;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FRotator controllerRotation_Right;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FRotator headRotation;
+
+	
 };

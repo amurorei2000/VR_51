@@ -81,6 +81,8 @@ public:
 	UPROPERTY(EditAnywhere, Category = "VR_Settings|Components")
 	class UGazeComponent* gazeComp;
 
+	UPROPERTY(EditAnywhere, Category = "VR_Settings|Components")
+	class UClimbComponent* climbComp;
 
 private:
 	void OnTriggerLeft(const struct FInputActionValue& value);

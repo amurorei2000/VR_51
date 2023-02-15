@@ -16,6 +16,7 @@
 #include "Components/WidgetInteractionComponent.h"
 #include "WidgetPointerComponent.h"
 #include "GazeComponent.h"
+#include "ClimbComponent.h"
 
 
 // Sets default values
@@ -80,6 +81,7 @@ AVR_Player::AVR_Player()
 	graspComp = CreateDefaultSubobject<UGraspComponent>(TEXT("Grasp Component"));
 	widgetPointerComp = CreateDefaultSubobject<UWidgetPointerComponent>(TEXT("Widget Pointer Component"));
 	gazeComp = CreateDefaultSubobject<UGazeComponent>(TEXT("Gaze Component"));
+	climbComp = CreateDefaultSubobject<UClimbComponent>(TEXT("Climb Component"));
 }
 
 // Called when the game starts or when spawned
@@ -123,6 +125,7 @@ void AVR_Player::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 		moveComp->SetupPlayerInputComponent(enhancedInputComponent);
 		graspComp->SetupPlayerInputComponent(enhancedInputComponent);
 		widgetPointerComp->SetupPlayerInputComponent(enhancedInputComponent);
+		climbComp->SetupPlayerInputComponent(enhancedInputComponent);
 	}
 }
 

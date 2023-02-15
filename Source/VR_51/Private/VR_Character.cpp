@@ -47,8 +47,20 @@ void AVR_Character::Tick(float DeltaTime)
 		myAnim->controllerLocation_Left = leftController->GetComponentLocation();
 		myAnim->controllerLocation_Right = rightController->GetComponentLocation();
 
-		myAnim->controllerRotation_Left = leftController->GetComponentRotation() * -1;
-		myAnim->controllerRotation_Right = rightController->GetComponentRotation() * -1;
+		FRotator leftRot = leftController->GetComponentRotation();
+		leftRot = FRotator(leftRot.Pitch *-1, leftRot.Yaw * -1, leftRot.Roll);
+
+		FRotator rightRot = rightController->GetComponentRotation();
+		rightRot = FRotator(rightRot.Pitch * -1, rightRot.Yaw, rightRot.Roll * -1);
+
+		myAnim->controllerRotation_Left = leftRot;
+		myAnim->controllerRotation_Right = rightRot;
+
+		FRotator headRot = cam->GetComponentRotation();
+		headRot = FRotator(headRot.Roll, headRot.Pitch * -1, headRot.Yaw * -1);
+
+		myAnim->headLocation = cam->GetComponentLocation();
+		myAnim->headRotation = headRot;
 	}
 }
 
